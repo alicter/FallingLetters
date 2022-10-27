@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8" />
+ <title>Letters</title>
+ <script src="pixi.js"></script>
+</head>
+<body>
+    <script>
+const app = new PIXI.Application({ backgroundColor: "orange", width : 500, height : 500  });
+document.body.appendChild(app.view);
+app.view.style.borderBottom = "5px solid black ";
+app.view.style.borderRight = "5px solid black ";
+const buttonStartStop = document.createElement("button");
+
+document.body.appendChild(buttonStartStop);
+buttonStartStop.id = "butSS";
+document.getElementById("butSS").innerText = "START/STOP";
+document.getElementById("butSS").addEventListener('click', ()=>{
+    Stop = (Stop === false) ? true: false;
+})
+const textScore = document.createElement("input");
+document.body.appendChild(textScore);
+textScore.id = "textScore";
+document.getElementById("textScore").style.backgroundColor = "grey";
+
+
+
+let basicTextArray = new Array();
+let basicTextTwoArray = new Array();
+let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let rectangle = new Array();
+let rectArrayX = new Array();
+let rectArrayY = new Array();
+let rectSize = new Array();
+
+let Rect = new Array();
+let rectangleTwo = new Array();
+let rectTwoArrayX = new Array();
+let rectTwoArrayY = new Array();
+let rectTwoSize = new Array();
+let randomLetterResult = new Array();
+
+let numberOfArray = 0;
+
+let KeyLetter;
+
+let i;
+
+let i1 = 0;
+let score = 0;
+let Stop = false;
+let gameFontSize = new Array();
+var gameDelay = 120;
+var generateLetterDelay = 2000;
+function randomLetter() {
+   let result = characters.charAt(Math.floor(Math.random() * characters.length));
+    return result;
+}
+function newLetter () {
+    if (Stop == true) return;
+    
+    Rect[numberOfArray] = (Math.round(Math.random() * 1 ) === 0 ) ? false : true;
+   
+
+
+    gameFontSize[numberOfArray] = Math.floor(Math.random()*20) +10;
+
+    const skewStyle = new PIXI.TextStyle({
+    fontFamily: 'Arial',
+    frameElement: true,
+    fontSize: gameFontSize[numberOfArray],
+    color: "white"
+    });
+    
+
+
+
+    rectSize[numberOfArray] = Math.floor(Math.random()* gameFontSize[numberOfArray] )*2 + gameFontSize[numberOfArray];
+    rectArrayX[numberOfArray] = Math.floor(Math.random()* 220 )*2; 
+    rectArrayY[numberOfArray] = (Rect[numberOfArray] == true) ?  -20 - (rectSize[numberOfArray] + gameFontSize[numberOfArray] ) : - (rectSize[numberOfArray] + gameFontSize[numberOfArray] ) ;
+ 
+
+    if (Rect[numberOfArray] == true) {
+        
+
+    rectTwoSize[numberOfArray] = rectSize[numberOfArray];
+    rectTwoArrayX[numberOfArray] = rectArrayX[numberOfArray] + gameFontSize[numberOfArray];
+    rectTwoArrayY[numberOfArray] = - (rectSize[numberOfArray] + gameFontSize[numberOfArray]);
+    } else 
+    {
+        rectTwoSize[numberOfArray] = null;
+    rectTwoArrayX[numberOfArray] = null;
+    rectTwoArrayY[numberOfArray] = null;
+
+    }
+   
+
+
+
+
+
+rectangle[numberOfArray] = new PIXI.Graphics();
+rectangle[numberOfArray].beginFill(0xe9faff, 0.5);
+rectangle[numberOfArray].drawRect(0,  0, (rectSize[numberOfArray] +gameFontSize[numberOfArray]), (rectSize[numberOfArray] +gameFontSize[numberOfArray]));
+rectangle[numberOfArray].endFill();
+rectangle[numberOfArray].x = rectArrayX[numberOfArray];
+rectangle[numberOfArray].y = rectArrayY[numberOfArray];
+
+randomLetterResult[numberOfArray] =  randomLetter();
+basicTextArray[numberOfArray] = new PIXI.Text(randomLetterResult[numberOfArray] , skewStyle);
+
+basicTextArray[numberOfArray].x = rectArrayX[numberOfArray] + (rectSize[numberOfArray]/2) ;
+basicTextArray[numberOfArray].y = rectArrayY[numberOfArray] + (rectSize[numberOfArray]/2);
+
+
+
+
+if (Rect[numberOfArray] == true) {
+        
+    rectangleTwo[numberOfArray] = new PIXI.Graphics();
+rectangleTwo[numberOfArray].beginFill(0xe9faff, 0.5);
+rectangleTwo[numberOfArray].drawRect(0,  0, (rectTwoSize[numberOfArray] +gameFontSize[numberOfArray]), (rectTwoSize[numberOfArray] +gameFontSize[numberOfArray]));
+rectangleTwo[numberOfArray].endFill();
+rectangleTwo[numberOfArray].x = rectTwoArrayX[numberOfArray];
+rectangleTwo[numberOfArray].y = rectTwoArrayY[numberOfArray];
+
+basicTextTwoArray[numberOfArray] = new PIXI.Text(randomLetterResult[numberOfArray] , skewStyle);
+
+basicTextTwoArray[numberOfArray].x = rectTwoArrayX[numberOfArray] + (rectTwoSize[numberOfArray]/2) ;
+basicTextTwoArray[numberOfArray].y = rectTwoArrayY[numberOfArray] + (rectTwoSize[numberOfArray]/2) ;
+        } else 
+        {
+        basicTextTwoArray[numberOfArray] = null;
+         rectTwoSize[numberOfArray] = null;
+        rectTwoArrayX[numberOfArray] = null;
+        rectTwoArrayY[numberOfArray] = null;
+    
+        };
+
+
+
+app.stage.addChild(rectangle[numberOfArray]);
+app.stage.addChild(basicTextArray[numberOfArray]);
+if (
+    
+Rect[numberOfArray] == true){
+    app.stage.addChild(rectangleTwo[numberOfArray]);
+app.stage.addChild(basicTextTwoArray[numberOfArray]);
+
+}
+numberOfArray = numberOfArray + 1 ;
+
+
+};
+
+
+
+function updateY(){
+    if (Stop == true) return;
+    for (i = 0; i < numberOfArray; i++ ) { 
+    rectArrayY[i] = rectArrayY[i] + 1;
+    rectangle[i].y = rectArrayY[i];
+    basicTextArray[i].y = rectArrayY[i] + (rectSize[i]/2) ;
+    if ( Rect[i] == true) {
+        rectTwoArrayY[i] = rectTwoArrayY[i] + 1;
+    rectangleTwo[i].y = rectTwoArrayY[i];
+    basicTextTwoArray[i].y = rectTwoArrayY[i] + (rectSize[i]/2) ;
+
+
+    };
+    if ( Rect[i] == false) { 
+        if ( (rectangle[i].y + rectSize[i] + 20 ) > 500 && rectangle[i].visible == true ) {
+        GameOver("GAME OVER");
+        }
+} else {
+    if ( (rectangleTwo[i].y + rectSize[i] + 20 ) > 500 && rectangleTwo[i].visible == true ) {
+        GameOver("GAME OVER");
+        
+    }
+
+
+}
+
+
+};
+
+
+};
+
+function GameOver(msg){
+    Stop = true;
+    for (let i2 = 0; i2 < numberOfArray; i2++ ) { 
+   
+    rectangle[i2].visible = false;
+
+    basicTextArray[i2].visible = false;
+    if ( Rect[i2] == true) {
+       
+    rectangleTwo[i2].visible = false;
+    basicTextTwoArray[i2].visible = false;
+
+
+    };
+};
+const GameOverStyle = new PIXI.TextStyle({
+    fontFamily: 'Arial',
+    frameElement: true,
+    fontSize: 50,
+    color: "black",
+    align: "center"
+    });
+  let  GameOverText = new PIXI.Text(msg , GameOverStyle);
+  
+  GameOverText.x = 50
+  GameOverText.y = 200;
+  app.stage.addChild(GameOverText);
+};
+
+
+ (function loop1() {
+   setTimeout(() => {
+    newLetter();
+      loop1();
+  }, generateLetterDelay);
+})();
+ (function loop2() {
+   setTimeout(() => {
+    updateY();
+      loop2();
+  }, gameDelay);
+})();
+
+
+
+function pressKey (e) {
+    
+KeyLetter = randomLetterResult[i1];
+if (`${e.code}` == ("Key" + KeyLetter) ) {
+    rectangle[i1].visible = false;
+    basicTextArray[i1].visible = false;
+    if (Rect[i1] == true) {
+        score = score +2;
+      if (score >= 50 )   GameOver("YOU WON");
+    rectangleTwo[i1].visible = false;
+    basicTextTwoArray[i1].visible = false;
+     }
+        generateLetterDelay = 1000 - score;
+        gameDelay = 120 - score;
+} else {
+    score = score - 1;
+
+    i1 = i1 - 1;
+} 
+document.getElementById("textScore").value = score;
+i1 = i1 + 1 ;
+}
+document.body.addEventListener('keypress', pressKey);
+
+    </script>
+
+</body>
+</html>
